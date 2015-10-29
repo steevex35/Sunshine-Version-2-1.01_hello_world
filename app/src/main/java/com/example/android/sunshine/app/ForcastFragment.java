@@ -41,6 +41,22 @@ public class ForcastFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
        inflater.inflate(R.menu.forecastfragment,menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                // Do Activity menu item stuff here
+                new FetchWeatherTask().execute();
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
     }
 
     @Override
@@ -123,6 +139,7 @@ public class ForcastFragment extends Fragment {
                     return null;
                 }
                 forecastJsonStr = buffer.toString();
+                Log.v(LOG_TAG,"Forecast JSON String: "+forecastJsonStr);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
