@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -49,6 +50,7 @@ public class ForcastFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
        inflater.inflate(R.menu.forecastfragment,menu);
+        new FetchWeatherTask().execute("London,uk");
 
     }
 
@@ -57,7 +59,7 @@ public class ForcastFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 // Do Activity menu item stuff here
-                new FetchWeatherTask().execute("94043");
+                new FetchWeatherTask().execute("London,uk");
                 return true;
 
             default:
@@ -81,6 +83,7 @@ public class ForcastFragment extends Fragment {
                 "Sat - HELP TRAPPED IN WEATHERSTATION - 60/51",
                 "Sun - Sunny - 80/68"
         };
+
         List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
 
         mForecastAdapter =
@@ -103,7 +106,20 @@ public class ForcastFragment extends Fragment {
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]>{
 
-        private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+        //private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null){
+                mForecastAdapter.clear();
+                for (String dayForecastStr : result){
+                    mForecastAdapter.add(dayForecastStr);
+                }
+                //data from the server
+            }
+        }
+
         @Override
         protected String[] doInBackground(String... params) {
             // These two need to be declared outside the try/catch
@@ -150,7 +166,7 @@ public class ForcastFragment extends Fragment {
                             .appendQueryParameter(APPID_PARAM,"9b348d79ba6202d57fe294274639aaa6")
                             .build();
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+                //Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -179,9 +195,9 @@ public class ForcastFragment extends Fragment {
                     return null;
                 }
                 forecastJsonStr = buffer.toString();
-                Log.v(LOG_TAG,"Forecast JSON String: "+forecastJsonStr);
+               // Log.v(LOG_TAG,"Forecast JSON String: "+forecastJsonStr);
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
+                //Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
                 return null;
@@ -193,14 +209,14 @@ public class ForcastFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
+                        //Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
             }
             try {
                 return getWeatherDataFromJson(forecastJsonStr, numDays);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
+                //Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
 
@@ -299,7 +315,7 @@ public class ForcastFragment extends Fragment {
             }
 
             for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
+                //Log.v(LOG_TAG, "Forecast entry: " + s);
             }
             return resultStrs;
         }
