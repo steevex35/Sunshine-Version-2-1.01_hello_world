@@ -45,12 +45,13 @@ public class ForcastFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        new FetchWeatherTask().execute("London,uk");
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
        inflater.inflate(R.menu.forecastfragment,menu);
-        new FetchWeatherTask().execute("London,uk");
+
 
     }
 
@@ -73,7 +74,7 @@ public class ForcastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
+        /*
         String[] forecastArray ={
                 "Today - Sunny - 88/63",
                 "Tomorrow - Foggy - 70/40",
@@ -98,7 +99,7 @@ public class ForcastFragment extends Fragment {
                         weekForecast);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
-
+        */
         return rootView;
     }
 
