@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -37,6 +38,10 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new ForcastFragment())
                     .commit();
         }
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setLogo(R.drawable.ic_launcher);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
 
     }
