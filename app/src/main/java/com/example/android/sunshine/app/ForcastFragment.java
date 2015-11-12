@@ -1,9 +1,11 @@
 package com.example.android.sunshine.app;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -53,7 +55,7 @@ public class ForcastFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-       inflater.inflate(R.menu.forecastfragment,menu);
+       inflater.inflate(R.menu.forecastfragment, menu);
 
 
     }
@@ -63,7 +65,13 @@ public class ForcastFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_refresh:
                 // Do Activity menu item stuff here
-                new FetchWeatherTask().execute("London,uk");
+                //new FetchWeatherTask().execute("London,uk");
+                FetchWeatherTask weatherTask = new FetchWeatherTask();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String location = prefs.getString(getString(R.string.pref_location_key),
+                        getString(R.string.pref_location_default));
+                //weatherTask.execute(location);
+                updateWeather();
                 return true;
 
             default:
@@ -73,22 +81,25 @@ public class ForcastFragment extends Fragment {
         return false;
     }
 
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+               SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+               String location = prefs.getString(getString(R.string.pref_location_key),
+                               getString(R.string.pref_location_default));
+                weatherTask.execute(location);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] forecastArray ={
-                "Today - Sunny - 88/63",
-                "Tomorrow - Foggy - 70/40",
-                "Weds - Cloudy - 72/65",
-                "Thurs - Asteroids - 75/65",
-                "Fri - Heavy Rain - 65/56",
-                "Sat - HELP TRAPPED IN WEATHERSTATION - 60/51",
-                "Sun - Sunny - 80/68"
-        };
-
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
 
         mForecastAdapter =
                 new ArrayAdapter<String>(
@@ -99,7 +110,7 @@ public class ForcastFragment extends Fragment {
                         //ID of the textview to populate
                         R.id.list_item_forecast_textview,
                         //Forecast data
-                        weekForecast);
+                        new ArrayList<String>());
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
 
