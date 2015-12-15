@@ -190,6 +190,7 @@ public class ForcastFragment extends Fragment {
                             .appendQueryParameter(UNITS_PARAM, units)
                             .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays))
                             .appendQueryParameter(APPID_PARAM,"9b348d79ba6202d57fe294274639aaa6")
+                            .appendQueryParameter(APPID_PARAM,"AIzaSyCkJcByi10tKbK8GiBSjGhNEKxmZDLSWSw")
                             .build();
                 URL url = new URL(builtUri.toString());
                 //Log.v(LOG_TAG, "Built URI " + builtUri.toString());
