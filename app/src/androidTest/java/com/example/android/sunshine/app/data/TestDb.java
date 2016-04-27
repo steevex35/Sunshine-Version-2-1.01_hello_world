@@ -111,8 +111,47 @@ public class TestDb extends AndroidTestCase {
         where you can uncomment out the "createNorthPoleLocationValues" function.  You can
         also make use of the ValidateCurrentRecord function from within TestUtilities.
     */
-    public void testLocationTable() {
-        insertLocation();
+    public long testLocationTable() {
+        //insertLocation();
+        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Validate data in resulting Cursor with the original ContentValues
+        ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
+
+        // Third Step: Insert ContentValues into database and get a row ID back
+        long locationRowId;
+        locationRowId = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, testValues);
+        // Verify we got a row back.
+        assertTrue(locationRowId != -1);
+
+        Cursor cursor = db.query(
+                                WeatherContract.LocationEntry.TABLE_NAME,  // Table to Query
+                               null, // all columns
+                               null, // Columns for the "where" clause
+                                null, // Values for the "where" clause
+                               null, // columns to group by
+                               null, // columns to filter by row groups
+                               null // sort order
+                               );
+        // Move the cursor to a valid database row and check to see if we got any records back
+        // from the query
+        assertTrue( "Error: No Records returned from location query", cursor.moveToFirst() );
+
+        TestUtilities.validateCurrentRecord("Error: Location Query Validation Failed",
+                cursor, testValues);
+
+
+        // Move the cursor to demonstrate that there is only one record in the database
+        assertFalse( "Error: More than one record returned from location query",
+                cursor.moveToNext() );
+
+        // Sixth Step: Close Cursor and Database
+        cursor.close();
+        db.close();
+
+        return locationRowId;
+
     }
         // First step: Get reference to writable database
 
